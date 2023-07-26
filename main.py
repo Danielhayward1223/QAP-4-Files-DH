@@ -2,14 +2,17 @@
 # Author: Daniel Hayward
 # Date: 2023-07-19
 
+# Import required libraries
 import datetime as DT
 import validate as VA
 import FormatValues as FV
 from tqdm import tqdm
 import time
 
+# Main program
 while True:
 
+    # defining variables by reading from data file
     f = open('OSICDef.dat', 'r')
     policyNumber = int(f.readline())
     basicPremium = float(f.readline())
@@ -21,10 +24,13 @@ while True:
     processFee = float(f.readline())
     f.close()
 
+    # Inputs for customer information
     custFirstName = input("Please enter the customer first name: ").title()
     custLastName = input("Please enter the customer last name: ").title()
     custAddress = input("Please enter the customer address: ")
     custCity = input("Please enter the customer city: ").title()
+
+    # Province list for validation
     validProv = [
         'NL',
         'NB',
@@ -38,6 +44,7 @@ while True:
         'PEI',
     ]
 
+    # Input and validate province input
     while True:
         custProvince = input("Please enter the customer province: ").upper()
         if custProvince == "":
@@ -47,10 +54,12 @@ while True:
         else:
             break
     
+    # Input more customer information
     custPostal = input("Please enter the customer postal code: ")
     custPhone = input("Please enter the customer phone number: ")
     custCars = int(input("Please enter the number of cars being insured: "))
     
+    # Input for optional services
     while True:
         extraLiability = input("Please enter whether there is extra liability (Y for yes, N for no): ").upper()
         if VA.validLetter(extraLiability, 'Y', 'N'):
@@ -66,11 +75,13 @@ while True:
         if VA.validLetter(optionalLoaner, 'Y', 'N'):
             break
     
+    # List to validate payment method
     payMethodLST = [
         "Full",
         "Monthly"
     ]
 
+    # Input the payment method
     while True:
         payMethod = input("Please enter whether it is paid in full or monthly (Full or Monthly): ").title()
         if payMethod == "":
@@ -80,6 +91,7 @@ while True:
         else:
             break
     
+    # Calculate the discount on the premium
     if custCars > 1:
 
         Discount = 0
@@ -88,9 +100,10 @@ while True:
             Discount += basicPremium * addDiscount
             discountFull += basicPremium - Discount
 
-    
+    # Calulate the base premium for the policy
     Premiums = basicPremium + Discount
 
+    # Calculate extra costs
     totalExtra = 0
 
     if extraLiability == "Y":
@@ -102,6 +115,7 @@ while True:
     if optionalLoaner == "Y":
         totalExtra += loanerCost
 
+    # Calulate totals
     totalPremium = Premiums + totalExtra
 
     taxCost = totalPremium * HSTRATE
@@ -110,11 +124,14 @@ while True:
 
     monthlyPayment = (totalCost + 39.99) / 8
 
+    # Get the invoice date and format it
     invoiceDate = DT.datetime.now()
     invoiceDateFormat = DT.datetime.strftime(invoiceDate, '%Y-%m-%d')
 
+    # Calculate the next payment date for monthly payments
     nextPaymentDate = invoiceDate.replace(day = 1, month = invoiceDate.month + 1)
     
+    # Output
     print("="*50)
     print("| One Stop Insurance Company")
     print("| Policy Information")
@@ -171,6 +188,7 @@ while True:
     print(f"Invoice date: {invoiceDateFormat}")
     print()
 
+    # Write the invoice data to the Policies.dat file
     f = open("Policies.dat", "w")
     f.write(f"{str(policyNumber)}, ")
     f.write(f"{invoiceDateFormat}, ")
@@ -189,12 +207,14 @@ while True:
     f.write(f"{str(totalPremium)}\n ")
     f.close()
 
+    # Progress bar
     print("Saving invoice - please wait")
     for _ in tqdm(range(20), desc="Saving", unit="ticks", ncols=100, bar_format="{desc}  {bar}"):
         time.sleep(.1)
     print("Data successfully saved ...")
     time.sleep(1)
 
+    # Prompt the user to enter another policy
     while True:
         repeat = input("Did you want to process another invoice? (Y for yes, N for no): ").upper()
         if VA.validLetter(repeat, "Y", "N"):
