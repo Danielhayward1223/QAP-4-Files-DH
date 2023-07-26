@@ -1,4 +1,4 @@
-# Description: A program for One Stop Insurance Company to enter and calulcate new insurance policy information for it's customers.
+# Description: A program for One Stop Insurance Company to enter and calculate new insurance policy information for it's customers.
 # Author: Daniel Hayward
 # Date: 2023-07-19
 
@@ -55,7 +55,7 @@ while True:
             break
     
     # Input more customer information
-    custPostal = input("Please enter the customer postal code: ")
+    custPostal = input("Please enter the customer postal code: ").upper()
     custPhone = input("Please enter the customer phone number: ")
     custCars = int(input("Please enter the number of cars being insured: "))
     
@@ -101,19 +101,19 @@ while True:
             discountFull += basicPremium - Discount
 
     # Calulate the base premium for the policy
-    Premiums = basicPremium + Discount
+    Premiums = basicPremium + discountFull
 
     # Calculate extra costs
     totalExtra = 0
 
     if extraLiability == "Y":
-        totalExtra += liabilityCost
+        totalExtra += liabilityCost * custCars
     
     if optionalGlass == "Y":
-        totalExtra += glassCost
+        totalExtra += glassCost * custCars
     
     if optionalLoaner == "Y":
-        totalExtra += loanerCost
+        totalExtra += loanerCost * custCars
 
     # Calulate totals
     totalPremium = Premiums + totalExtra
@@ -132,17 +132,17 @@ while True:
     nextPaymentDate = invoiceDate.replace(day = 1, month = invoiceDate.month + 1)
     
     # Output
-    print("="*50)
+    print("="*75)
     print("| One Stop Insurance Company")
     print("| Policy Information")
-    print("="*50)
+    print("="*75)
     print(f"| Customer Information: ")
     print("|")
     print(f"| Customer Name:          {custFirstName} {custLastName}")
     print(f"| Customer Address:       {custAddress} {custCity}, {custProvince}")
     print(f"| Customer Postal Code:   {custPostal}")
     print(f"| Customer Phone:         {custPhone}")
-    print("="*50)
+    print("="*75)
     print(f"| Policy Information: ")
     print("|")
     print(f"| Policy Number:          {policyNumber}")
@@ -160,18 +160,18 @@ while True:
         print("| Optional Loaner Car: Yes")
     else:
         print("| Optional Loaner Car: No")
-    print("="*50)
+    print("="*75)
     print("| Extra Costs: ")
     print("|")
     if extraLiability == "Y":
-        print(f"| Extra Liability Cost:   {FV.FDollar2(liabilityCost)}")
+        print(f"| Extra Liability Cost:   {FV.FDollar2(liabilityCost*custCars)}")
     if optionalGlass == "Y":
-        print(f"| Optional Glass Cost:    {FV.FDollar2(glassCost)}")
+        print(f"| Optional Glass Cost:    {FV.FDollar2(glassCost*custCars)}")
     if optionalLoaner == "Y":
-        print(f"| Optional Loaner Cost:   {FV.FDollar2(loanerCost)}")
+        print(f"| Optional Loaner Cost:   {FV.FDollar2(loanerCost*custCars)}")
     print("|")
     print(f"| Total Extra Cost:       {FV.FDollar2(totalExtra)}")
-    print("="*50)
+    print("="*75)
     print("| Policy Costs: ")
     print("|")
     print(f"| Basic Premium:          ${basicPremium}")
@@ -184,27 +184,13 @@ while True:
     if payMethod == "Monthly":
         print(f"| Monthly Payment:        {FV.FDollar2(monthlyPayment)}")
         print(f"| Next payment Date:      {nextPaymentDate}")
-    print("="*50)
+    print("="*75)
     print(f"Invoice date: {invoiceDateFormat}")
     print()
 
     # Write the invoice data to the Policies.dat file
     f = open("Policies.dat", "w")
-    f.write(f"{str(policyNumber)}, ")
-    f.write(f"{invoiceDateFormat}, ")
-    f.write(f"{custFirstName}, ")
-    f.write(f"{custLastName}, ")
-    f.write(f"{custAddress}, ")
-    f.write(f"{custCity}, ")
-    f.write(f"{custProvince}, ")
-    f.write(f"{custPostal}, ")
-    f.write(f"{custPhone[0:3]}-{custPhone[3:6]}-{custPhone[6:11]}, ")
-    f.write(f"{str(custCars)}, ")
-    f.write(f"{extraLiability}, ")
-    f.write(f"{optionalGlass}, ")
-    f.write(f"{optionalLoaner}, ")
-    f.write(f"{payMethod}, ")
-    f.write(f"{str(totalPremium)}\n ")
+    f.write(f"{str(policyNumber)}, {invoiceDateFormat}, {custFirstName}, {custLastName}, {custAddress}, {custCity}, {custProvince}, {custPostal}, {custPhone[0:3]}-{custPhone[3:6]}-{custPhone[6:11]}, {str(custCars)}, {extraLiability}, {optionalGlass}, {optionalLoaner}, {str(totalPremium)}\n")
     f.close()
 
     # Progress bar
