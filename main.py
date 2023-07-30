@@ -189,7 +189,7 @@ while True:
     print()
 
     # Write the invoice data to the Policies.dat file
-    f = open("Policies.dat", "w")
+    f = open("Policies.dat", "a")
     f.write(f"{str(policyNumber)}, {invoiceDateFormat}, {custFirstName}, {custLastName}, {custAddress}, {custCity}, {custProvince}, {custPostal}, {custPhone[0:3]}-{custPhone[3:6]}-{custPhone[6:11]}, {str(custCars)}, {extraLiability}, {optionalGlass}, {optionalLoaner}, {str(totalPremium)}\n")
     f.close()
 
